@@ -1,4 +1,5 @@
 #include "Tile.h"
+#include <iostream>
 
 Tile::Tile(int gridX, int gridY, int identifier)
 {
@@ -16,14 +17,9 @@ Tile::Tile(int gridX, int gridY, int identifier)
     case 2:
         type = Type::METAL;
         break;
-    case 3:
-        type = Type::ROCK;
-        break;
-    case 4:
-        type = Type::DIAMOND;
-        break;
     default:
-        type = Type::ROCK;
+        std::cout << "Tile type: " << identifier << " is invalid, defaulting to 0 (DIRT)" << std::endl;
+        type = Type::DIRT;
         break;
     }
 }
@@ -50,14 +46,8 @@ void Tile::setType(int newType)
     case 2:
         type = Type::METAL;
         break;
-    case 3:
-        type = Type::ROCK;
-        break;
-    case 4:
-        type = Type::DIAMOND;
-        break;
     default:
-        type = Type::ROCK;
+        type = Type::DIRT;
         break;
     }
 }
