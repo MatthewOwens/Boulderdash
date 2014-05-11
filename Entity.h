@@ -1,3 +1,6 @@
+// Entity is an abstract class that acts as a base for the Player
+// and Enemy classes.
+
 #ifndef ENTITY_H
 #define ENTITY_H
 #include <SFML/Graphics.hpp>
@@ -16,7 +19,7 @@ class Entity
         void setCurrentAnimation(int newAnim);
         void update();
         void draw(sf::RenderWindow& window);
-        virtual ~Entity();
+        virtual ~Entity() = 0;  // Making the class abstract
 
     protected:
         sf::Vector2i gridLocation;  // The entity's location on the grid
