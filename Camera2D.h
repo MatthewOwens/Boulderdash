@@ -4,7 +4,9 @@
 
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
-
+#include <iostream>
+#include <list>
+#include <SFML/Graphics.hpp>
 
 class Camera2D
 {
@@ -13,7 +15,7 @@ class Camera2D
         virtual ~Camera2D();
         void setCenter(int x, int y);
         void move(int offsetX, int offsetY);
-        void loadPanPoints(const std::string& folderPath);
+        void loadPanPoints(const std::string& folderPath, int tileSize);
         void pan();
     private:
         std::list<sf::Vector2i> panPoints;

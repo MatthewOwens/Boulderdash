@@ -43,12 +43,12 @@ void Camera2D::loadPanPoints(const std::string& folderPath, int tileSize)
         std::string substring;
         std::istringstream ss(line);
 
-        std::getline(ss, substring, ',')
+        std::getline(ss, substring, ',');
         std::istringstream intConvert(substring);
         intConvert >> point.x;
 
         std::getline(ss, substring, ',');
-        intConvert = std::istringstream (substring);
+        intConvert.str(substring);
         intConvert >> point.y;
 
         std::cout << "Loaded pan point (" << point.x << "," << point.y << ")";
@@ -65,7 +65,7 @@ void Camera2D::pan()
         if (previousPanPoint == panPoints.end())
         {
             panComplete = true;
-            break;
+            return;
         }
     }
 }
