@@ -30,7 +30,7 @@ void Camera2D::loadPanPoints(const std::string& folderPath, int tileSize)
     // Clearing the previously stored pan points
     panPoints.clear();
     panComplete = false;
-    previousPanPoint = panPoints.end();
+    previousPanPoint = panPoints.begin();
 
     // Opening the target file
     std::ifstream file(folderPath + "/camera.txt");
@@ -62,10 +62,16 @@ void Camera2D::pan()
     // If the camera hasn't panned over the level yet
     if (!panComplete)
     {
-        if (previousPanPoint == panPoints.end())
+        // Checking if the camera should stop panning over the level
+        if (previousPanPoint == panPoints.end() - 1)
         {
+            std::cout << "Camera Pan Complete" << std::endl;
             panComplete = true;
             return;
+        }
+        else
+        {
+            sf::Vector2i diff()
         }
     }
 }
