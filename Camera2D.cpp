@@ -30,7 +30,7 @@ void Camera2D::loadPanPoints(const std::string& folderPath, int tileSize)
     // Clearing the previously stored pan points
     panPoints.clear();
     panComplete = false;
-    previousPanPoint = panPoints.begin();
+    previousPanPoint = panPoints.end();
 
     // Opening the target file
     std::ifstream file(folderPath + "/camera.txt");
@@ -62,8 +62,12 @@ void Camera2D::pan()
     // If the camera hasn't panned over the level yet
     if (!panComplete)
     {
+        std::list<sf::Vector2i>::iterator tempItr;
+        tempItr = panPoints.end();
+        tempItr--;
+
         // Checking if the camera should stop panning over the level
-        if (previousPanPoint == panPoints.end() - 1)
+        if (previousPanPoint == tempItr)
         {
             std::cout << "Camera Pan Complete" << std::endl;
             panComplete = true;
@@ -71,11 +75,78 @@ void Camera2D::pan()
         }
         else
         {
-            sf::Vector2i diff()
+            // If the camera hasn't started panning yet, move it to the first
+            // location.
+            if (previousPanPoint == panPoints.end())
+            {
+                previousPanPoint = panPoints.begin();
+                setCenter(previousPanPoint->x, previousPanPoint->y);
+                return;
+
+            }
+
+            // Finding the difference between the camera's current location and
+            // the next location.
+            previousPanPoint++;
+
+            sf::Vector2i diff((previousPanPoint)->x - camera.getCenter().x,
+                              (previousPanPoint)->y - camera.getCenter().y);
+
+            // The difference is zero, keep the previous pan point incrimented
+            // (so it now represents the camera location) and leave the method
+            // The camera movement is dropped for this update but at ~60
+            // updates per second this becomes negligable.
+            if(diff.x == 0 && diff.y == 0)
+                return;
+
+            previousPanPoint--;
+
+            // Moving the camera along the X axis
+            if(diff.x > 0)
+                camera.move(1,0);
+            else if (diff.x < 0)
+                camera.move(-1,0);
+
+            // Moving the camera along the Y axis
+            if(diff.y > 0)
+                camera.move(0,1);
+            else if (diff.y < 0)
+                camera.move(0,-1);
         }
     }
 }
 
+void Camera2D::update(sf::Vector2f playerLocation))
+{
+    // Don't update the camera if it is still panning.
+    if(!panComplete)
+        return;
+
+    // Getting the viewport
+    const sf::FloatRect viewport = view.getViewport();
+
+    // Centering the camera on the player's location
+    camera.setCenter(playerLocation);
+
+    // Moving the camera if it goes past the edges of the map
+    if(viewport.left < mapBounds.left)
+        view.move(-viewport.left,0);
+
+    if(viewport.left + viewport.width >
+       mapBounds.left + mapBounds.width)
+    {
+        view.move((mapBounds.left + mapBounds.width) - (viewport.left + viewport.width),0);
+    }
+
+    if(viewport.top < mapBounds.top)
+        view.move(0, -viewport.top);
+
+    if(viewport.top + viewport.height >
+       mapBounds.heignt + mapBounds.width)
+    {
+        view.move(0,(mapBounds.top + mapBounds.height) - (viewport.top + viewport.height));
+    }
+}
 
 Camera2D::~Camera2D()
 {
