@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "ImageManager.h"
-#include "Entity.h"
+#include "Level.h"
 
 int main()
 {
@@ -9,6 +9,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1280,720), "IT LIVES");
     window.setFramerateLimit(60);
     ImageManager imageManager;
+    Level testLevel("levels/testLevel/", "woopwoop", imageManager);
 
     while(window.isOpen())
     {

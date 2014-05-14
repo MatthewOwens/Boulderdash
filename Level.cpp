@@ -2,83 +2,65 @@
 #include <fstream>
 #include <sstream>
 
-// Constructor, ImageManager is not const as it needs to be manipulated
-Level::Level(const std::string& filepath, ImageManager &imageManager)
+// Constructor, loads the tilemap and tile identifiers from a specific folder
+Level::Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
 {
-    // Loading this level's tilesheet
-    imageManager.loadImage(filepath + "/tilesheet.png");
-
-    // Loading the map
-    loadMap(filepath, imageManager);
-}
-
-// Loading the tiles, this method is called in the constructor
-void Level::loadMap(const std::string& filepath, ImageManager &imageManager)
-{
-    std::ifstream file;
-    int counter = 0;    // Used for navigating the file
     std::string line;
+    std::string subString;
+    std::ifstream file(levelPath + "map.txt");
+    int lineCounter = 0;// Variable to track what line is currently being read
 
-    // Opening the map file
-    file.open(filepath + "/map.txt");
+    std::vector< std::vector<Tile> >::iterator outerItr = tileMap.begin();
 
-    // Ensuring that the map file was opened correctly
-    if (file.good())
+    // Loading the tilesheet associated with the level instance
+    //imageManager.loadImage(tilePath);
+
+    // Loading the tiles that will populate the level
+    while(std::getline(file, line))
     {
-        // Parsing the map file
-        while(std::getline(file, line))
+        std::stringstream lineStream(line);
+
+        // Determining how many rows are in the level
+        if (lineCounter == 0)
         {
-            for (int i = 0; i < 10; i++)
+            lineStream >> mapSize.x;
+            std::cout << "Map is of size: " << mapSize.x;
+        }
+        else if (lineCounter == 1)
+        {
+            lineStream >> mapSize.y;
+            std::cout << "x" << mapSize.y << std::endl;
+        }
+        else
+        {
+            std::string subStr;
+            std::vector<Tile> inner;
+
+            while (std::getline(lineStream, subStr, ','))
             {
-                if(line[i] != 's')
-                    tiles[i][counter] = Tile(imageManager.getImage(filepath + "/tilesheet.png"),
-                                             tileSize, line[i] - '0', i, counter);
-                else
-                {
-                    tiles[i][counter] = Tile(imageManager.getImage(filepath + "/tilesheet.png"),
-                                            tileSize, 0, i, counter);
-                    playerSpawn = sf::Vector2i(i * tileSize, counter * tileSize);
-                }
-                //std::cout << line[i];
+                std::stringstream intConvert(subStr);
+                int tileID;
+
+                intConvert >> tileID;
+                Tile tempTile(tileID);
+                inner.push_back(tempTile);
             }
-            counter++;
-            //std::cout << std::endl;
+            std::cout << inner.size();
+            tileMap.push_back(inner);
+
         }
-    }
-    else    // You done goofed.
-    {
-        std::cout << "Map file at '" << filepath << "/map.txt' was not found!" << std::endl;
-    }
-    // Closing the map file
-    file.close();
-}
-
-
-// Draw method, takes a const reference to the window
-void Level::draw(sf::RenderWindow& window)
-{
-    std::list<Item>::iterator itr_item;
-    // Drawing the tiles
-    for(int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
+        //std::advance(outerItr, 1);
+        if (lineCounter > 1)
         {
-            window.draw(tiles[i][j].sprite);
+            //std::cout << outerItr->size() << std::endl;
+            //std::advance(outerItr,1);
         }
+        lineCounter++;
     }
 }
 
-
+// Level destructor
 Level::~Level()
 {
-    //dtor
-}
 
-// Accessor methods
-Level::TilePtr Level::getTiles()
-{
-    return tiles;
 }
-Tile Level::getTile(int x, int y) { return tiles[x][y]; }
-sf::Vector2i Level::getSpawn() { return playerSpawn; }
-const int Level::getTileSize() { return tileSize; }

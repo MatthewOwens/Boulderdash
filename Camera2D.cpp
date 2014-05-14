@@ -116,35 +116,35 @@ void Camera2D::pan()
     }
 }
 
-void Camera2D::update(sf::Vector2f playerLocation))
+void Camera2D::update(sf::Vector2f playerLocation)
 {
     // Don't update the camera if it is still panning.
     if(!panComplete)
         return;
 
     // Getting the viewport
-    const sf::FloatRect viewport = view.getViewport();
+    const sf::FloatRect viewport = camera.getViewport();
 
     // Centering the camera on the player's location
     camera.setCenter(playerLocation);
 
     // Moving the camera if it goes past the edges of the map
     if(viewport.left < mapBounds.left)
-        view.move(-viewport.left,0);
+        camera.move(-viewport.left,0);
 
     if(viewport.left + viewport.width >
        mapBounds.left + mapBounds.width)
     {
-        view.move((mapBounds.left + mapBounds.width) - (viewport.left + viewport.width),0);
+        camera.move((mapBounds.left + mapBounds.width) - (viewport.left + viewport.width),0);
     }
 
     if(viewport.top < mapBounds.top)
-        view.move(0, -viewport.top);
+        camera.move(0, -viewport.top);
 
     if(viewport.top + viewport.height >
-       mapBounds.heignt + mapBounds.width)
+       mapBounds.height + mapBounds.width)
     {
-        view.move(0,(mapBounds.top + mapBounds.height) - (viewport.top + viewport.height));
+        camera.move(0,(mapBounds.top + mapBounds.height) - (viewport.top + viewport.height));
     }
 }
 

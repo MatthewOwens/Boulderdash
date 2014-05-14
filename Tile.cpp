@@ -1,9 +1,9 @@
 #include "Tile.h"
 #include <iostream>
 
-Tile::Tile(int gridX, int gridY, int identifier)
+Tile::Tile(int identifier)
 {
-    gridLocation = sf::Vector2i(gridX, gridY);
+    //gridLocation = sf::Vector2i(gridX, gridY);
 
     // Determining the type of tile specified
     switch(identifier)
