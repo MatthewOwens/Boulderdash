@@ -12,6 +12,7 @@ class Level
     Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
     ~Level(); // Destructor
     void draw(sf::RenderWindow& window);
+    Tile::Type getTileID(int x, int y);   // Gets the ID of a tile at the specified position
 
     private:
     Tile** tileMap;

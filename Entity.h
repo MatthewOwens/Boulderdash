@@ -1,4 +1,4 @@
-// Entity is an abstract class that acts as a base for the Player
+// Entity is an abstract class that acts as a base for the Player, Obstacle
 // and Enemy classes.
 
 #ifndef ENTITY_H
@@ -17,7 +17,7 @@ class Entity
         void setGridLocation(int gridX, int gridY);
         void setTexture(sf::Texture& texture);
         void setCurrentAnimation(int newAnim);
-        void update();
+        virtual void update();
         void draw(sf::RenderWindow& window);
         virtual ~Entity() = 0;  // Making the class abstract
 

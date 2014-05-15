@@ -80,6 +80,16 @@ void Level::draw(sf::RenderWindow& window)
     }
 }
 
+Tile::Type Level::getTileID(int x, int y)
+{
+    if (x < 0 || x > mapSize.x || y < 0 || y > mapSize.y)
+    {
+        std::cout << "Requested tile (" << x << "," << y << "is out of the level bounds\n";
+        return Tile::DIRT;
+    }
+    return tileMap[x][y].type;
+}
+
 // Level destructor
 Level::~Level()
 {
