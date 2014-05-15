@@ -24,6 +24,9 @@ Tile::Tile(int identifier)
     }
 }
 
+// Default constructor
+Tile::Tile(){}
+
 void Tile::setTexture(sf::Texture& texture, const int tileSize)
 {
     // Associating a texture (tileSheet) with this sprite

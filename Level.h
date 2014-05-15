@@ -4,7 +4,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "ImageManager.h"
 #include <iostream>
-#include <vector>
 
 
 class Level
@@ -14,7 +13,7 @@ class Level
     ~Level(); // Destructor
 
     private:
-    std::vector< std::vector<Tile> > tileMap;
+    Tile** tileMap;
     sf::Vector2i mapSize;   // The size of the map in tiles
 };
 

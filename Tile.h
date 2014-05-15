@@ -5,6 +5,8 @@
 
 class Tile
 {
+    friend class Level;
+
     public:
         enum Type {DIRT,CLEAR,METAL,ROCK,DIAMOND};
 

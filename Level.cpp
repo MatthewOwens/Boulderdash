@@ -10,8 +10,6 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
     std::ifstream file(levelPath + "map.txt");
     int lineCounter = 0;// Variable to track what line is currently being read
 
-    std::vector< std::vector<Tile> >::iterator outerItr = tileMap.begin();
-
     // Loading the tilesheet associated with the level instance
     //imageManager.loadImage(tilePath);
 
@@ -25,42 +23,53 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         {
             lineStream >> mapSize.x;
             std::cout << "Map is of size: " << mapSize.x;
+
+            // Creating an array of pointers
+            tileMap = new Tile*[mapSize.x];
         }
         else if (lineCounter == 1)
         {
             lineStream >> mapSize.y;
             std::cout << "x" << mapSize.y << std::endl;
+
+            // Where an element of type ptr, points to a dynamic array.
+            for (int i = 0; i < mapSize.x; i++)
+                tileMap[i] = new Tile[mapSize.y];
         }
         else
         {
-            std::string subStr;
-            std::vector<Tile> inner;
-
-            while (std::getline(lineStream, subStr, ','))
+            int subCounter = 0;
+            int result;
+            while (std::getline(lineStream, subString, ','))
             {
-                std::stringstream intConvert(subStr);
-                int tileID;
+                // Creating a stringstream to convert the input char to an int
+                std::istringstream convert(subString);
+                convert >> result;
 
-                intConvert >> tileID;
-                Tile tempTile(tileID);
-                inner.push_back(tempTile);
+                // Populating the array
+                tileMap[lineCounter - 2][subCounter] = Tile(result);
+
+                subCounter++;
             }
-            std::cout << inner.size();
-            tileMap.push_back(inner);
-
-        }
-        //std::advance(outerItr, 1);
-        if (lineCounter > 1)
-        {
-            //std::cout << outerItr->size() << std::endl;
-            //std::advance(outerItr,1);
         }
         lineCounter++;
+    }
+    std::cout << "\n" << std::endl;
+
+    for(int i = 0; i < mapSize.x; i++)
+    {
+        for (int j = 0;j < mapSize.y; j++)
+            std::cout << tileMap[i][j].type;
+        std::cout << "\n";
     }
 }
 
 // Level destructor
 Level::~Level()
 {
+    // Cleaning up the dynamically sized arrays
+    for(int i = 0; i < mapSize.y; ++i)
+        delete [] tileMap[i];
 
+    delete [] tileMap;
 }
