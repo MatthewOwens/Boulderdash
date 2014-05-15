@@ -11,10 +11,12 @@ class Level
     public:
     Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
     ~Level(); // Destructor
+    void draw(sf::RenderWindow& window);
 
     private:
     Tile** tileMap;
     sf::Vector2i mapSize;   // The size of the map in tiles
+    const int tileSize = 64;
 };
 
 #endif // LEVEL_H

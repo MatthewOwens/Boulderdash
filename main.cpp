@@ -9,7 +9,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1280,720), "IT LIVES");
     window.setFramerateLimit(60);
     ImageManager imageManager;
-    Level testLevel("levels/testLevel/", "woopwoop", imageManager);
+    Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
 
     while(window.isOpen())
     {
@@ -23,6 +23,7 @@ int main()
 
         // Render
         window.clear();
+        testLevel.draw(window);
         window.display();
     }
 }

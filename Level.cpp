@@ -11,7 +11,7 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
     int lineCounter = 0;// Variable to track what line is currently being read
 
     // Loading the tilesheet associated with the level instance
-    //imageManager.loadImage(tilePath);
+    imageManager.loadImage(tilePath);
 
     // Loading the tiles that will populate the level
     while(std::getline(file, line))
@@ -47,7 +47,11 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
                 convert >> result;
 
                 // Populating the array
-                tileMap[lineCounter - 2][subCounter] = Tile(result);
+                tileMap[lineCounter - 2][subCounter] = Tile(result, lineCounter-2,subCounter,tileSize);
+
+                // Initilizing the tile's sprite
+                tileMap[lineCounter - 2][subCounter].setTexture(imageManager.getTexture(tilePath), tileSize);
+
 
                 subCounter++;
             }
@@ -61,6 +65,18 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         for (int j = 0;j < mapSize.y; j++)
             std::cout << tileMap[i][j].type;
         std::cout << "\n";
+    }
+}
+
+// Draw function
+void Level::draw(sf::RenderWindow& window)
+{
+    for(int i = 0; i < mapSize.x; i++)
+    {
+        for(int j = 0; j < mapSize.y; j++)
+        {
+            tileMap[i][j].draw(window);
+        }
     }
 }
 

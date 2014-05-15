@@ -1,7 +1,7 @@
 #include "Tile.h"
 #include <iostream>
 
-Tile::Tile(int identifier)
+Tile::Tile(int identifier, int x, int y, const int tileSize)
 {
     //gridLocation = sf::Vector2i(gridX, gridY);
 
@@ -22,6 +22,7 @@ Tile::Tile(int identifier)
         type = Type::DIRT;
         break;
     }
+    sprite.setPosition(x*tileSize, y*tileSize);
 }
 
 // Default constructor
@@ -33,7 +34,7 @@ void Tile::setTexture(sf::Texture& texture, const int tileSize)
     sprite.setTexture(texture);
 
     // Determining what part of the tileSheet to draw
-    sprite.setTextureRect( sf::IntRect(type * tileSize, type * tileSize, tileSize, tileSize) );
+    sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize) );
 }
 
 void Tile::setType(int newType)
@@ -49,10 +50,18 @@ void Tile::setType(int newType)
     case 2:
         type = Type::METAL;
         break;
+    case 3:
+        type = Type::EXIT;
+        break;
     default:
         type = Type::DIRT;
         break;
     }
+}
+
+void Tile::draw(sf::RenderWindow& window)
+{
+    window.draw(sprite);
 }
 
 Tile::~Tile()

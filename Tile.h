@@ -8,12 +8,13 @@ class Tile
     friend class Level;
 
     public:
-        enum Type {DIRT,CLEAR,METAL,ROCK,DIAMOND};
+        enum Type {DIRT,CLEAR,METAL,EXIT};
 
-        Tile(int identifier);
+        Tile(int identifier, int x, int y, const int tileSize);
         Tile(); // Default constructor
         void setTexture(sf::Texture& texture, const int tileSize);
         void setType(int newType);
+        void draw(sf::RenderWindow& window);
         virtual ~Tile();
     private:
         sf::Sprite sprite;
