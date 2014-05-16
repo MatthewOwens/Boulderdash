@@ -47,12 +47,12 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
                 convert >> result;
 
                 // Populating the array
-                tileMap[lineCounter - 2][subCounter] = Tile(result, lineCounter-2,subCounter,tileSize);
+                tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
 
                 // Initilizing the tile's sprite
-                tileMap[lineCounter - 2][subCounter].setTexture(imageManager.getTexture(tilePath), tileSize);
+                tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilePath), tileSize);
 
-
+                std::cout << "Loaded " << lineCounter - 2 << "x" << subCounter << std::endl;
                 subCounter++;
             }
         }

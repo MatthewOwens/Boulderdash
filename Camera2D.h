@@ -18,11 +18,13 @@ class Camera2D
         void loadPanPoints(const std::string& folderPath, int tileSize);
         void pan();
         void update(sf::Vector2f playerLocation);
+        sf::View& getView();
     private:
         std::list<sf::Vector2i> panPoints;
         std::list<sf::Vector2i>::iterator previousPanPoint;
         bool panComplete;
         sf::IntRect mapBounds;
+        sf::IntRect viewBounds;
         sf::View camera;
 };
 

@@ -7,20 +7,30 @@
 Camera2D::Camera2D(int resW, int resH, int mapW, int mapH, int tileSize)
 {
     camera.reset(sf::FloatRect(0, 0, resW, resH));
+    viewBounds = sf::IntRect(0,0,resW,resH);
     mapBounds = sf::IntRect(0, 0, mapW * tileSize, mapH * tileSize);
     panComplete = false;
+
+    std::cout << "Camera Viewport: " << viewBounds.left << ","
+    << viewBounds.top << "," << viewBounds.width << ","
+    << viewBounds.height << "\n";
+    panComplete = true;
 }
 
 // Sets the position of the camera
 void Camera2D::setCenter(int x, int y)
 {
     camera.setCenter(x,y);
+    viewBounds.left = x - (viewBounds.width) / 2;
+    viewBounds.top = y - (viewBounds.top) / 2;
 }
 
 // Move the camera by an offset
 void Camera2D::move(int offsetX, int offsetY)
 {
     camera.move(offsetX, offsetY);
+    viewBounds.left += offsetX;
+    viewBounds.top += offsetY;
 }
 
 // Loads the locations within the level that the camera should pan through once
@@ -103,15 +113,15 @@ void Camera2D::pan()
 
             // Moving the camera along the X axis
             if(diff.x > 0)
-                camera.move(1,0);
+                move(1,0);
             else if (diff.x < 0)
-                camera.move(-1,0);
+                move(-1,0);
 
             // Moving the camera along the Y axis
             if(diff.y > 0)
-                camera.move(0,1);
+                move(0,1);
             else if (diff.y < 0)
-                camera.move(0,-1);
+                move(0,-1);
         }
     }
 }
@@ -122,30 +132,36 @@ void Camera2D::update(sf::Vector2f playerLocation)
     if(!panComplete)
         return;
 
-    // Getting the viewport
-    const sf::FloatRect viewport = camera.getViewport();
-
     // Centering the camera on the player's location
-    camera.setCenter(playerLocation);
+    //setCenter(playerLocation);
 
     // Moving the camera if it goes past the edges of the map
-    if(viewport.left < mapBounds.left)
-        camera.move(-viewport.left,0);
+    if(viewBounds.left < mapBounds.left)
+        move(-viewBounds.left,0);
 
-    if(viewport.left + viewport.width >
+    if(viewBounds.left + viewBounds.width >
        mapBounds.left + mapBounds.width)
     {
-        camera.move((mapBounds.left + mapBounds.width) - (viewport.left + viewport.width),0);
+        move((mapBounds.left + mapBounds.width) - (viewBounds.left + viewBounds.width),0);
     }
 
-    if(viewport.top < mapBounds.top)
-        camera.move(0, -viewport.top);
+    if(viewBounds.top < mapBounds.top)
+        move(0, -viewBounds.top);
 
-    if(viewport.top + viewport.height >
-       mapBounds.height + mapBounds.width)
+    if(viewBounds.top + viewBounds.height >
+       mapBounds.top + mapBounds.height)
     {
-        camera.move(0,(mapBounds.top + mapBounds.height) - (viewport.top + viewport.height));
+        move(0,(mapBounds.top + mapBounds.height) - (viewBounds.top + viewBounds.height));
     }
+
+    std::cout << "Camera Viewport: " << viewBounds.left << ","
+    << viewBounds.top << "," << viewBounds.width + viewBounds.left << ","
+    << viewBounds.height + viewBounds.top << "\n";
+}
+
+sf::View& Camera2D::getView()
+{
+    return camera;
 }
 
 Camera2D::~Camera2D()
