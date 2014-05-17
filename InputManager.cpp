@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include <iostream>
 
 InputManager::InputManager()
 {
@@ -17,4 +18,14 @@ void InputManager::update()
         previousPressedKeys[i] = pressedKeys[i];
         pressedKeys[i] = sf::Keyboard::isKeyPressed( (sf::Keyboard::Key)i );
     }
+}
+
+bool InputManager::pressedOnce(sf::Keyboard::Key keycheck)
+{
+    std::cout << "Now: " << pressedKeys[keycheck] << "\t Prev: " <<
+    previousPressedKeys[keycheck] << "\n";
+
+    if(pressedKeys[keycheck] && !previousPressedKeys[keycheck])
+        return true;
+    else return false;
 }
