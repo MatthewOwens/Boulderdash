@@ -12,6 +12,7 @@ int main()
     window.setFramerateLimit(60);
     ImageManager imageManager;
     InputManager inputManager;
+    Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
 
     while(window.isOpen())
     {
@@ -22,9 +23,12 @@ int main()
         {
 
         }
+        if(inputManager.pressedOnce(sf::Keyboard::B))
+            testLevel.update();
 
         // Render
         window.clear();
+        testLevel.draw(window);
         window.display();
     }
 }

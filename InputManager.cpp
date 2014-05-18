@@ -22,9 +22,6 @@ void InputManager::update()
 
 bool InputManager::pressedOnce(sf::Keyboard::Key keycheck)
 {
-    std::cout << "Now: " << pressedKeys[keycheck] << "\t Prev: " <<
-    previousPressedKeys[keycheck] << "\n";
-
     if(pressedKeys[keycheck] && !previousPressedKeys[keycheck])
         return true;
     else return false;

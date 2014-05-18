@@ -17,6 +17,15 @@ Tile::Tile(int identifier, int x, int y, const int tileSize)
     case 2:
         type = Type::METAL;
         break;
+    case 3:
+        type = Type::EXIT;
+        break;
+    case 4:
+        type = Type::ROCK;
+        break;
+    case 5:
+        type = Type::DIAMOND;
+        break;
     default:
         std::cout << "Tile type: " << identifier << " is invalid, defaulting to 0 (DIRT)" << std::endl;
         type = Type::DIRT;
@@ -34,12 +43,15 @@ void Tile::setTexture(sf::Texture& texture, const int tileSize)
     sprite.setTexture(texture);
 
     // Determining what part of the tileSheet to draw
-    sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize) );
+    if (type != Type::EXIT)
+        sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize) );
+    else
+        sprite.setTextureRect( sf::IntRect(2 * tileSize, 0, tileSize, tileSize) );
 }
 
-void Tile::setType(int newType)
+void Tile::setType(Type newType, const int tileSize)
 {
-    switch(newType)
+    /*switch(newType)
     {
     case 0:
         type = Type::DIRT;
@@ -56,7 +68,11 @@ void Tile::setType(int newType)
     default:
         type = Type::DIRT;
         break;
-    }
+    }*/
+    type = newType;
+
+    // Changing the sprite to relfect the new type
+    sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize ));
 }
 
 void Tile::draw(sf::RenderWindow& window)

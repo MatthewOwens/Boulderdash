@@ -53,6 +53,16 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
                 tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilePath), tileSize);
 
                 std::cout << "Loaded " << lineCounter - 2 << "x" << subCounter << std::endl;
+
+                // Incrementing the counters
+                if (result == 5)
+                {
+                    remainingDiamonds++;
+                    obstacleLocations.push_back(sf::Vector2i(subCounter, lineCounter - 2));
+                }
+                else if (result == 4)
+                    obstacleLocations.push_back(sf::Vector2i(subCounter, lineCounter - 2));
+
                 subCounter++;
             }
         }
@@ -65,6 +75,51 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         for (int j = 0;j < mapSize.y; j++)
             std::cout << tileMap[i][j].type;
         std::cout << "\n";
+    }
+}
+
+// Update Method
+void Level::update()
+{
+    std::vector<sf::Vector2i>::iterator outerItr;
+    std::vector<sf::Vector2i>::iterator innerItr;
+
+    for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
+    {
+        bool moved = false;
+        // Checking if the obstacle can fall
+        if(tileMap[outerItr->x][outerItr->y + 1].type == Tile::CLEAR)
+        {
+            std::cout << "Changing " << tileMap[outerItr->x][outerItr->y + 1].type
+            << " to " << tileMap[outerItr->x][outerItr->y].type << "\n";
+
+            tileMap[outerItr->x][outerItr->y + 1].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
+            tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+            outerItr->y++;
+            moved = true;
+        }
+        if(!moved)
+        {
+            for(innerItr = obstacleLocations.begin(); innerItr != obstacleLocations.end();
+            ++innerItr)
+            {
+                if(outerItr->x == innerItr->x && outerItr->y + 1== innerItr->y)
+                {
+                    if(tileMap[outerItr->x+1][outerItr->y].type == Tile::CLEAR)
+                    {
+                        tileMap[outerItr->x + 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
+                        tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                        outerItr->x++;
+                    }
+                    else if (tileMap[outerItr->x-1][outerItr->y].type == Tile::CLEAR)
+                    {
+                        tileMap[outerItr->x - 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
+                        tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                        outerItr->x--;
+                    }
+                }
+            }
+        }
     }
 }
 
