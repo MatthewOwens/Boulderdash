@@ -58,10 +58,10 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
                 if (result == 5)
                 {
                     remainingDiamonds++;
-                    obstacleLocations.push_back(sf::Vector2i(subCounter, lineCounter - 2));
+                    obstacleLocations.insert(obstacleLocations.begin(),Obstacle(subCounter, lineCounter - 2));
                 }
                 else if (result == 4)
-                    obstacleLocations.push_back(sf::Vector2i(subCounter, lineCounter - 2));
+                    obstacleLocations.insert(obstacleLocations.begin(),Obstacle(subCounter, lineCounter - 2));
 
                 subCounter++;
             }
@@ -81,8 +81,8 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
 // Update Method
 void Level::update()
 {
-    std::vector<sf::Vector2i>::iterator outerItr;
-    std::vector<sf::Vector2i>::iterator innerItr;
+    std::vector<Obstacle>::iterator outerItr;
+    std::vector<Obstacle>::iterator innerItr;
 
     for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
     {
@@ -97,8 +97,9 @@ void Level::update()
             tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
             outerItr->y++;
             moved = true;
+            outerItr->falling = true;
         }
-        if(!moved)
+        if(!moved && outerItr->falling)
         {
             for(innerItr = obstacleLocations.begin(); innerItr != obstacleLocations.end();
             ++innerItr)
@@ -110,12 +111,14 @@ void Level::update()
                         tileMap[outerItr->x + 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
                         tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
                         outerItr->x++;
+                        outerItr->falling = false;
                     }
                     else if (tileMap[outerItr->x-1][outerItr->y].type == Tile::CLEAR)
                     {
                         tileMap[outerItr->x - 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
                         tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
                         outerItr->x--;
+                        outerItr->falling = false;
                     }
                 }
             }

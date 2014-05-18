@@ -16,8 +16,21 @@ class Level
     Tile::Type getTileID(int x, int y);   // Gets the ID of a tile at the specified position
 
     private:
+    struct Obstacle
+    {
+        int x;
+        int y;
+        bool falling = false;
+
+        Obstacle(int xLoc, int yLoc)
+        {
+            x = xLoc;
+            y = yLoc;
+        }
+    };
+
     Tile** tileMap;
-    std::vector<sf::Vector2i> obstacleLocations;
+    std::vector<Obstacle> obstacleLocations;
     sf::Vector2i mapSize;   // The size of the map in tiles
     const int tileSize = 64;
     int remainingDiamonds;
