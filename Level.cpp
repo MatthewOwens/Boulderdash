@@ -9,6 +9,7 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
     std::string subString;
     std::ifstream file(levelPath + "map.txt");
     int lineCounter = 0;// Variable to track what line is currently being read
+    exitOpen = false;
 
     // Loading the tilesheet associated with the level instance
     imageManager.loadImage(tilePath);
@@ -146,6 +147,22 @@ Tile::Type Level::getTileID(int x, int y)
         return Tile::DIRT;
     }
     return tileMap[x][y].type;
+}
+
+bool Level::traversable(int x, int y)
+{
+    if(tileMap[x][y].type == Tile::CLEAR ||
+       tileMap[x][y].type == Tile::DIRT ||
+       tileMap[x][y].type == Tile::DIAMOND ||
+      (tileMap[x][y].type == Tile::EXIT && exitOpen))
+   {
+        return true;
+   } else return false;
+}
+
+const int Level::getTileSize()
+{
+    return tileSize;
 }
 
 // Level destructor

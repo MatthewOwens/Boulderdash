@@ -5,6 +5,7 @@
 Entity::Entity(int gridX, int gridY)
 {
     gridLocation = sf::Vector2i(gridX, gridY);
+    sprite.setPosition(gridX, gridY);
     currentAnimation = 0;
     currentAnimFrame = 0;
 }
@@ -13,6 +14,7 @@ Entity::Entity(int gridX, int gridY)
 Entity::Entity(int gridX, int gridY, sf::Texture& texture)
 {
     gridLocation = sf::Vector2i(gridX, gridY);
+    sprite.setPosition(gridX, gridY);
     sprite.setTexture(texture);
     currentAnimation = 0;
     currentAnimFrame = 0;
@@ -59,7 +61,7 @@ void Entity::setCurrentAnimation(int newAnim)
     currentAnimFrame = 0;
 }
 
-void Entity::update()
+bool Entity::update()
 {
     //std::cout << animClock.getElapsedTime().asMilliseconds() << std::endl;
 

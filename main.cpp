@@ -4,6 +4,7 @@
 #include "Level.h"
 #include "Camera2D.h"
 #include "InputManager.h"
+#include "Player.h"
 
 int main()
 {
@@ -13,6 +14,9 @@ int main()
     ImageManager imageManager;
     InputManager inputManager;
     Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
+    imageManager.loadImage("assets/sprites/raveSprite.png", "playerSprite");
+    Player player(1 * testLevel.getTileSize(),4 * testLevel.getTileSize(),imageManager.getTexture("playerSprite"));
+    player.initAnimations(1,1);
 
     while(window.isOpen())
     {
@@ -23,12 +27,16 @@ int main()
         {
 
         }
-        if(inputManager.pressedOnce(sf::Keyboard::B))
+        if(inputManager.validKeyDown())
+        {
             testLevel.update();
+            player.update(testLevel, inputManager);
+        }
 
         // Render
         window.clear();
         testLevel.draw(window);
+        player.draw(window);
         window.display();
     }
 }

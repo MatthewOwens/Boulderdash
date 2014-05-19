@@ -3,7 +3,12 @@
 
 InputManager::InputManager()
 {
-    //ctor
+    keyBinds["up"] = sf::Keyboard::W;
+    keyBinds["down"] = sf::Keyboard::S;
+    keyBinds["left"] = sf::Keyboard::A;
+    keyBinds["right"] = sf::Keyboard::D;
+    keyBinds["confirm"] = sf::Keyboard::Return;
+    keyBinds["cancel"] = sf::Keyboard::BackSpace;
 }
 
 InputManager::~InputManager()
@@ -20,9 +25,25 @@ void InputManager::update()
     }
 }
 
-bool InputManager::pressedOnce(sf::Keyboard::Key keycheck)
+bool InputManager::pressedOnce(std::string keyName)
 {
-    if(pressedKeys[keycheck] && !previousPressedKeys[keycheck])
+    if(pressedKeys[keyBinds[keyName]] && !previousPressedKeys[keyBinds[keyName]])
         return true;
     else return false;
+}
+
+bool InputManager::validKeyDown()
+{
+    bool value = false;
+    std::map<std::string, sf::Keyboard::Key>::iterator mapItr;
+
+    for(mapItr = keyBinds.begin(); mapItr != keyBinds.end(); ++mapItr)
+    {
+        if(pressedOnce(mapItr->first) &&
+           (mapItr->first != "confirm" || mapItr->first != "cancel"))
+        {
+            return true;
+        }
+    }
+    return false;
 }
