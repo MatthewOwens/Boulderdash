@@ -17,7 +17,7 @@ class Entity
         void setGridLocation(int gridX, int gridY);
         void setTexture(sf::Texture& texture);
         void setCurrentAnimation(int newAnim);
-        virtual bool update();
+        void updateAnimations();
         void draw(sf::RenderWindow& window);
         virtual ~Entity() = 0;  // Making the class abstract
 

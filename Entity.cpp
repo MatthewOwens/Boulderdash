@@ -61,7 +61,7 @@ void Entity::setCurrentAnimation(int newAnim)
     currentAnimFrame = 0;
 }
 
-bool Entity::update()
+void Entity::updateAnimations()
 {
     //std::cout << animClock.getElapsedTime().asMilliseconds() << std::endl;
 
@@ -78,6 +78,11 @@ bool Entity::update()
         sourceRect = sf::IntRect(currentAnimFrame * 64, currentAnimation * 64, 64, 64);
         sprite.setTextureRect(sourceRect);
     }
+}
+
+sf::Vector2i Entity::getGridLocation()
+{
+    return gridLocation;
 }
 
 // Used to draw the entity

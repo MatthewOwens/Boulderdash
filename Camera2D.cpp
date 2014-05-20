@@ -39,7 +39,7 @@ void Camera2D::loadPanPoints(const std::string& folderPath, int tileSize)
 {
     // Clearing the previously stored pan points
     panPoints.clear();
-    panComplete = false;
+    panComplete = true;
     previousPanPoint = panPoints.end();
 
     // Opening the target file
@@ -126,18 +126,18 @@ void Camera2D::pan()
     }
 }
 
-void Camera2D::update(sf::Vector2f playerLocation)
+void Camera2D::update(sf::Vector2i playerLocation, const int tileSize)
 {
     // Don't update the camera if it is still panning.
     if(!panComplete)
         return;
 
     // Centering the camera on the player's location
-    //setCenter(playerLocation);
+    setCenter(playerLocation.x * tileSize, playerLocation.y * tileSize);
 
     // Moving the camera if it goes past the edges of the map
     if(viewBounds.left < mapBounds.left)
-        move(-viewBounds.left,0);
+        move(-viewBounds.left, 0);
 
     if(viewBounds.left + viewBounds.width >
        mapBounds.left + mapBounds.width)
@@ -147,16 +147,21 @@ void Camera2D::update(sf::Vector2f playerLocation)
 
     if(viewBounds.top < mapBounds.top)
         move(0, -viewBounds.top);
+        //move(0, viewBounds.top - mapBounds.top);
 
-    if(viewBounds.top + viewBounds.height >
+    if(viewBounds.top + viewBounds.height <
        mapBounds.top + mapBounds.height)
     {
-        move(0,(mapBounds.top + mapBounds.height) - (viewBounds.top + viewBounds.height));
+        //move(0,(mapBounds.top + mapBounds.height) - (viewBounds.top + viewBounds.height));
+        //move(0,(viewBounds.top + viewBounds.height) - (mapBounds.top + mapBounds.height));
     }
 
-    std::cout << "Camera Viewport: " << viewBounds.left << ","
+    std::cout << "View Bounds: " << viewBounds.left << ","
     << viewBounds.top << "," << viewBounds.width + viewBounds.left << ","
     << viewBounds.height + viewBounds.top << "\n";
+
+    std::cout << "Map  Bounds: " << mapBounds.left << "," << mapBounds.top << ","
+    << mapBounds.width + viewBounds.left << "," << mapBounds.height + mapBounds.top << "\n";
 }
 
 sf::View& Camera2D::getView()

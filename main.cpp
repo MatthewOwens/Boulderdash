@@ -16,7 +16,8 @@ int main()
     Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
     imageManager.loadImage("assets/sprites/raveSprite.png", "playerSprite");
     Player player(1, 4 ,testLevel.getTileSize(), imageManager.getTexture("playerSprite"));
-    player.initAnimations(1,1);
+    player.initAnimations(5,500);
+    Camera2D camera(1280,720,21,13, testLevel.getTileSize());
 
     while(window.isOpen())
     {
@@ -29,9 +30,12 @@ int main()
         }
         if(inputManager.validKeyDown())
         {
-            testLevel.update();
+            testLevel.update(player.getGridLocation());
             player.update(testLevel, inputManager);
         }
+        camera.update(player.getGridLocation(), testLevel.getTileSize());
+        player.updateAnimations();
+        window.setView(camera.getView());
 
         // Render
         window.clear();

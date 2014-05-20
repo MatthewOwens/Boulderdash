@@ -17,7 +17,7 @@ class Camera2D
         void move(int offsetX, int offsetY);
         void loadPanPoints(const std::string& folderPath, int tileSize);
         void pan();
-        void update(sf::Vector2f playerLocation);
+        void update(sf::Vector2i playerLocation, const int tileSize);
         sf::View& getView();
     private:
         std::list<sf::Vector2i> panPoints;

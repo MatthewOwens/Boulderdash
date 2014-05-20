@@ -23,7 +23,6 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         if (lineCounter == 0)
         {
             lineStream >> mapSize.x;
-            std::cout << "Map is of size: " << mapSize.x;
 
             // Creating an array of pointers
             tileMap = new Tile*[mapSize.x];
@@ -31,7 +30,6 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         else if (lineCounter == 1)
         {
             lineStream >> mapSize.y;
-            std::cout << "x" << mapSize.y << std::endl;
 
             // Where an element of type ptr, points to a dynamic array.
             for (int i = 0; i < mapSize.x; i++)
@@ -53,8 +51,6 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
                 // Initilizing the tile's sprite
                 tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilePath), tileSize);
 
-                std::cout << "Loaded " << lineCounter - 2 << "x" << subCounter << std::endl;
-
                 // Incrementing the counters
                 if (result == 5)
                 {
@@ -69,22 +65,15 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
         }
         lineCounter++;
     }
-    std::cout << "\n" << std::endl;
-
-    for(int i = 0; i < mapSize.x; i++)
-    {
-        for (int j = 0;j < mapSize.y; j++)
-            std::cout << tileMap[i][j].type;
-        std::cout << "\n";
-    }
 }
 
 // Update Method
-void Level::update()
+void Level::update(sf::Vector2i playerLocation)
 {
     std::vector<Obstacle>::iterator outerItr;
     std::vector<Obstacle>::iterator innerItr;
 
+    // Updating the rock & diamond positions
     for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
     {
         bool moved = false;
@@ -100,7 +89,7 @@ void Level::update()
             moved = true;
             outerItr->falling = true;
         }
-        if(!moved && outerItr->falling)
+        if(!moved && outerItr->falling) // Making obstacles roll off each other
         {
             for(innerItr = obstacleLocations.begin(); innerItr != obstacleLocations.end();
             ++innerItr)
@@ -125,6 +114,12 @@ void Level::update()
             }
         }
     }
+
+    // Updating the tiles as the player moves along them
+    if(tileMap[playerLocation.x][playerLocation.y].type == Tile::DIAMOND)
+        remainingDiamonds--;
+
+    tileMap[playerLocation.x][playerLocation.y].setType(Tile::CLEAR, tileSize);
 }
 
 // Draw function

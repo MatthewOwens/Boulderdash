@@ -12,7 +12,7 @@ class Level
     Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
     ~Level(); // Destructor
     void draw(sf::RenderWindow& window);
-    void update();
+    void update(sf::Vector2i playerLocation);
     Tile::Type getTileID(int x, int y);     // Gets the ID of a tile at the specified position
     bool traversable(int x, int y);         // Gets wether or not the specified tile is traversable
     const int getTileSize();
