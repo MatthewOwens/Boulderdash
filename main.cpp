@@ -15,7 +15,7 @@ int main()
     InputManager inputManager;
     Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
     imageManager.loadImage("assets/sprites/raveSprite.png", "playerSprite");
-    Player player(1 * testLevel.getTileSize(),4 * testLevel.getTileSize(),imageManager.getTexture("playerSprite"));
+    Player player(1, 4 ,testLevel.getTileSize(), imageManager.getTexture("playerSprite"));
     player.initAnimations(1,1);
 
     while(window.isOpen())

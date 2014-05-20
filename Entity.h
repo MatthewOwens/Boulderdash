@@ -10,7 +10,7 @@ class Entity
 {
     public:
         Entity(int gridX, int gridY);
-        Entity(int gridX, int gridY, sf::Texture& texture);
+        Entity(int gridX, int gridY, const int tileSize, sf::Texture& texture);
         void initAnimations(int animLength, int frameLength);
         void gridMove(int offsetX, int offsetY);
         sf::Vector2i getGridLocation();

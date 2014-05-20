@@ -11,10 +11,10 @@ Entity::Entity(int gridX, int gridY)
 }
 
 // Alternate Constructor, sets the grid location and the sprite texture
-Entity::Entity(int gridX, int gridY, sf::Texture& texture)
+Entity::Entity(int gridX, int gridY, const int tileSize, sf::Texture& texture)
 {
     gridLocation = sf::Vector2i(gridX, gridY);
-    sprite.setPosition(gridX, gridY);
+    sprite.setPosition(gridX * tileSize, gridY * tileSize);
     sprite.setTexture(texture);
     currentAnimation = 0;
     currentAnimFrame = 0;

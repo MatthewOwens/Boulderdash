@@ -1,7 +1,7 @@
 #include "Player.h"
 
-Player::Player(int gridX, int gridY, sf::Texture& texture)
-    :Entity(gridX, gridY, texture)
+Player::Player(int gridX, int gridY, const int tileSize, sf::Texture& texture)
+    :Entity(gridX, gridY, tileSize, texture)
 {
     lives = 3;
 }
@@ -19,11 +19,11 @@ void Player::decrementLives()
 void Player::update(Level& currentLevel, InputManager& inputManager)
 {
     if(inputManager.pressedOnce("up") &&
-       currentLevel.traversable(gridLocation.x, gridLocation.y + 1))
-        gridLocation.y++;
-    else if (inputManager.pressedOnce("down") &&
-             currentLevel.traversable(gridLocation.x, gridLocation.y - 1))
+       currentLevel.traversable(gridLocation.x, gridLocation.y - 1))
         gridLocation.y--;
+    else if (inputManager.pressedOnce("down") &&
+             currentLevel.traversable(gridLocation.x, gridLocation.y + 1))
+        gridLocation.y++;
     else if (inputManager.pressedOnce("right") &&
              currentLevel.traversable(gridLocation.x + 1, gridLocation.y))
         gridLocation.x++;
@@ -32,6 +32,4 @@ void Player::update(Level& currentLevel, InputManager& inputManager)
         gridLocation.x--;
 
     sprite.setPosition(gridLocation.x * currentLevel.getTileSize(), gridLocation.y * currentLevel.getTileSize());
-    std::cout << sprite.getPosition().x << " " << sprite.getPosition().y << std::endl;
-    std::cout << gridLocation.x << " " << gridLocation.y << std::endl;
 }
