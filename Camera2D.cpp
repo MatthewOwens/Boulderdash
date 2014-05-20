@@ -21,8 +21,8 @@ Camera2D::Camera2D(int resW, int resH, int mapW, int mapH, int tileSize)
 void Camera2D::setCenter(int x, int y)
 {
     camera.setCenter(x,y);
-    viewBounds.left = x - (viewBounds.width) / 2;
-    viewBounds.top = y - (viewBounds.top) / 2;
+    viewBounds.left = x - (viewBounds.width / 2);
+    viewBounds.top = y - (viewBounds.height / 2);
 }
 
 // Move the camera by an offset
@@ -147,21 +147,12 @@ void Camera2D::update(sf::Vector2i playerLocation, const int tileSize)
 
     if(viewBounds.top < mapBounds.top)
         move(0, -viewBounds.top);
-        //move(0, viewBounds.top - mapBounds.top);
 
-    if(viewBounds.top + viewBounds.height <
+    if(viewBounds.top + viewBounds.height >
        mapBounds.top + mapBounds.height)
     {
-        //move(0,(mapBounds.top + mapBounds.height) - (viewBounds.top + viewBounds.height));
-        //move(0,(viewBounds.top + viewBounds.height) - (mapBounds.top + mapBounds.height));
+        move(0,(mapBounds.top + mapBounds.height) - (viewBounds.top + viewBounds.height));
     }
-
-    std::cout << "View Bounds: " << viewBounds.left << ","
-    << viewBounds.top << "," << viewBounds.width + viewBounds.left << ","
-    << viewBounds.height + viewBounds.top << "\n";
-
-    std::cout << "Map  Bounds: " << mapBounds.left << "," << mapBounds.top << ","
-    << mapBounds.width + viewBounds.left << "," << mapBounds.height + mapBounds.top << "\n";
 }
 
 sf::View& Camera2D::getView()
