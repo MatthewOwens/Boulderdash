@@ -33,3 +33,14 @@ void Player::update(Level& currentLevel, InputManager& inputManager)
 
     sprite.setPosition(gridLocation.x * currentLevel.getTileSize(), gridLocation.y * currentLevel.getTileSize());
 }
+
+bool Player::deathCheck(std::vector<sf::Vector2i> obstacleLocations)
+{
+    std::vector<sf::Vector2i>::iterator itr;
+    for(itr = obstacleLocations.begin(); itr != obstacleLocations.end(); ++itr)
+    {
+        if(itr->x == gridLocation.x && itr->y == gridLocation.y)
+            return true;
+    }
+    return false;
+}

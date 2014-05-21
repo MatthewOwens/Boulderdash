@@ -5,11 +5,18 @@
 // Constructor, loads the tilemap and tile identifiers from a specific folder
 Level::Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
 {
+    loadMap(levelPath, tilePath, imageManager);
+}
+
+// Load Map function
+void Level::loadMap(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
+{
     std::string line;
     std::string subString;
     std::ifstream file(levelPath + "map.txt");
     int lineCounter = 0;// Variable to track what line is currently being read
     exitOpen = false;
+    playerCrushed = false;
 
     // Loading the tilesheet associated with the level instance
     imageManager.loadImage(tilePath);
@@ -71,55 +78,70 @@ Level::Level(const std::string& levelPath, const std::string& tilePath, ImageMan
 void Level::update(sf::Vector2i playerLocation)
 {
     std::vector<Obstacle>::iterator outerItr;
-    std::vector<Obstacle>::iterator innerItr;
 
     // Updating the rock & diamond positions
     for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
     {
         bool moved = false;
-        // Checking if the obstacle can fall
+
         if(tileMap[outerItr->x][outerItr->y + 1].type == Tile::CLEAR)
         {
-            std::cout << "Changing " << tileMap[outerItr->x][outerItr->y + 1].type
-            << " to " << tileMap[outerItr->x][outerItr->y].type << "\n";
-
+            outerItr->falling = true;
             tileMap[outerItr->x][outerItr->y + 1].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
             tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
             outerItr->y++;
             moved = true;
-            outerItr->falling = true;
+
         }
-        if(!moved && outerItr->falling) // Making obstacles roll off each other
+        else outerItr->falling = false;
+
+        if(outerItr->x == playerLocation.x && outerItr->y == playerLocation.y
+           && outerItr->falling)
         {
-            for(innerItr = obstacleLocations.begin(); innerItr != obstacleLocations.end();
-            ++innerItr)
+            playerCrushed = true;
+            std::cout << "SPLAT!" << std::endl;
+        }
+
+        if((tileMap[outerItr->x][outerItr->y + 1].type == Tile::ROCK ||
+           tileMap[outerItr->x][outerItr->y + 1].type == Tile::DIAMOND)
+           && moved == false)
+        {
+            if (tileMap[outerItr->x + 1][outerItr->y].type == Tile::CLEAR &&
+                tileMap[outerItr->x + 1][outerItr->y + 1].type == Tile::CLEAR)
             {
-                if(outerItr->x == innerItr->x && outerItr->y + 1== innerItr->y)
-                {
-                    if(tileMap[outerItr->x+1][outerItr->y].type == Tile::CLEAR)
-                    {
-                        tileMap[outerItr->x + 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
-                        tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
-                        outerItr->x++;
-                        outerItr->falling = false;
-                    }
-                    else if (tileMap[outerItr->x-1][outerItr->y].type == Tile::CLEAR)
-                    {
-                        tileMap[outerItr->x - 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
-                        tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
-                        outerItr->x--;
-                        outerItr->falling = false;
-                    }
-                }
+                tileMap[outerItr->x + 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
+                tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                outerItr->x++;
+                moved = true;
+            }
+            else if (tileMap[outerItr->x - 1][outerItr->y].type == Tile::CLEAR &&
+                     tileMap[outerItr->x - 1][outerItr->y + 1].type == Tile::CLEAR)
+            {
+                tileMap[outerItr->x - 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
+                tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                outerItr->x--;
+                moved = true;
             }
         }
     }
-
     // Updating the tiles as the player moves along them
-    if(tileMap[playerLocation.x][playerLocation.y].type == Tile::DIAMOND)
-        remainingDiamonds--;
+    if(tileMap[playerLocation.x][playerLocation.y].type != Tile::ROCK)
+    {
+        // If the player collected a diamond
+        if(tileMap[playerLocation.x][playerLocation.y].type == Tile::DIAMOND)
+        {
+            remainingDiamonds--;
 
-    tileMap[playerLocation.x][playerLocation.y].setType(Tile::CLEAR, tileSize);
+            // Remove the diamond from the obstacle list
+            for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
+            {
+                if(playerLocation.x == outerItr->x && playerLocation.y == outerItr->y)
+                    break;
+            }
+            obstacleLocations.erase(outerItr);
+        }
+        tileMap[playerLocation.x][playerLocation.y].setType(Tile::CLEAR, tileSize);
+    }
 }
 
 // Draw function
@@ -146,13 +168,22 @@ Tile::Type Level::getTileID(int x, int y)
 
 bool Level::traversable(int x, int y)
 {
-    if(tileMap[x][y].type == Tile::CLEAR ||
-       tileMap[x][y].type == Tile::DIRT ||
-       tileMap[x][y].type == Tile::DIAMOND ||
-      (tileMap[x][y].type == Tile::EXIT && exitOpen))
+    if (tileMap[x][y].type == Tile::CLEAR ||
+        tileMap[x][y].type == Tile::DIRT ||
+        tileMap[x][y].type == Tile::DIAMOND||
+        (tileMap[x][y].type == Tile::EXIT && exitOpen))
    {
         return true;
    } else return false;
+}
+
+std::vector<sf::Vector2i> Level::getObstacleLocations()
+{
+    std::vector<sf::Vector2i> returns;
+    std::vector<Obstacle>::iterator itr;
+
+    for(itr = obstacleLocations.begin(); itr != obstacleLocations.end(); ++itr)
+        returns.push_back(sf::Vector2i(itr->x, itr->y));
 }
 
 const int Level::getTileSize()
