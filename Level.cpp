@@ -5,21 +5,23 @@
 // Constructor, loads the tilemap and tile identifiers from a specific folder
 Level::Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
 {
-    loadMap(levelPath, tilePath, imageManager);
+    mapPath = levelPath;
+    tilesheetPath = tilePath;
+    loadMap(imageManager);
 }
 
 // Load Map function
-void Level::loadMap(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
+void Level::loadMap(ImageManager& imageManager)
 {
     std::string line;
     std::string subString;
-    std::ifstream file(levelPath + "map.txt");
+    std::ifstream file(mapPath + "map.txt");
     int lineCounter = 0;// Variable to track what line is currently being read
     exitOpen = false;
     playerCrushed = false;
 
     // Loading the tilesheet associated with the level instance
-    imageManager.loadImage(tilePath);
+    imageManager.loadImage(tilesheetPath);
 
     // Loading the tiles that will populate the level
     while(std::getline(file, line))
@@ -53,10 +55,16 @@ void Level::loadMap(const std::string& levelPath, const std::string& tilePath, I
                 convert >> result;
 
                 // Populating the array
-                tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
+                if(subString != "s")
+                    tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
+                else
+                {
+                    tileMap[subCounter][lineCounter - 2] = Tile(1,subCounter,lineCounter - 2,tileSize);
+                    playerSpawn = sf::Vector2i(subCounter,lineCounter - 2);
+                }
 
                 // Initilizing the tile's sprite
-                tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilePath), tileSize);
+                tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilesheetPath), tileSize);
 
                 // Incrementing the counters
                 if (result == 5)
@@ -156,6 +164,16 @@ void Level::draw(sf::RenderWindow& window)
     }
 }
 
+bool Level::isPlayerCrushed()
+{
+    return playerCrushed;
+}
+
+sf::Vector2i Level::getPlayerSpawn()
+{
+    return playerSpawn;
+}
+
 Tile::Type Level::getTileID(int x, int y)
 {
     if (x < 0 || x > mapSize.x || y < 0 || y > mapSize.y)
@@ -184,6 +202,8 @@ std::vector<sf::Vector2i> Level::getObstacleLocations()
 
     for(itr = obstacleLocations.begin(); itr != obstacleLocations.end(); ++itr)
         returns.push_back(sf::Vector2i(itr->x, itr->y));
+
+    return returns;
 }
 
 const int Level::getTileSize()

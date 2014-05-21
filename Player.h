@@ -13,7 +13,6 @@ class Player : public Entity
         virtual ~Player();
         void update(Level& currentLevel, InputManager& inputManager);
         void decrementLives();
-        bool deathCheck(std::vector<sf::Vector2i> obstacleLocations);
     private:
         int lives;
 

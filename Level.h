@@ -16,10 +16,13 @@ class Level
     Tile::Type getTileID(int x, int y);     // Gets the ID of a tile at the specified position
     bool traversable(int x, int y);         // Gets wether or not the specified tile is traversable
     const int getTileSize();
+    bool isPlayerCrushed();
     std::vector<sf::Vector2i> getObstacleLocations();
+    sf::Vector2i getPlayerSpawn();
+    void loadMap(ImageManager& imageManager);
+
 
     private:
-    void loadMap(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
 
     struct Obstacle
     {
@@ -37,10 +40,14 @@ class Level
     Tile** tileMap;
     std::vector<Obstacle> obstacleLocations;
     sf::Vector2i mapSize;   // The size of the map in tiles
+    sf::Vector2i playerSpawn;
     const int tileSize = 64;
     int remainingDiamonds;
     bool exitOpen;
     bool playerCrushed;
+
+    std::string mapPath;
+    std::string tilesheetPath;
 };
 
 #endif // LEVEL_H

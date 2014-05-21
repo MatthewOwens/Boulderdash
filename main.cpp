@@ -15,7 +15,7 @@ int main()
     InputManager inputManager;
     Level testLevel("levels/testLevel/", "assets/tilesheets/upperTiles.png", imageManager);
     imageManager.loadImage("assets/sprites/raveSprite.png", "playerSprite");
-    Player player(1, 0 ,testLevel.getTileSize(), imageManager.getTexture("playerSprite"));
+    Player player(testLevel.getPlayerSpawn().x,testLevel.getPlayerSpawn().y,testLevel.getTileSize(), imageManager.getTexture("playerSprite"));
     player.initAnimations(5,500);
     Camera2D camera(1280,720,21,13, testLevel.getTileSize());
 
@@ -32,10 +32,15 @@ int main()
         {
             player.update(testLevel, inputManager);
             testLevel.update(player.getGridLocation());
+            if(testLevel.isPlayerCrushed())
+            {
+                testLevel.loadMap(imageManager);
+                player.setGridLocation(testLevel.getPlayerSpawn());
+                player.updateSprite(testLevel.getTileSize());
+            }
         }
         camera.update(player.getGridLocation(), testLevel.getTileSize());
         player.updateAnimations();
-        //player.deathCheck(testLevel.getObstacleLocations());
         window.setView(camera.getView());
 
         // Render
