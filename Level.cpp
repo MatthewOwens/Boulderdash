@@ -3,23 +3,31 @@
 #include <sstream>
 
 // Constructor, loads the tilemap and tile identifiers from a specific folder
-Level::Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
+Level::Level(int levelCount, const std::string& tilePath, ImageManager& imageManager)
 {
-    remainingDiamonds = 0;
-    mapPath = levelPath;
+    std::stringstream convert;
+    convert << levelCount;
+    //remainingDiamonds = 0;
+    mapPath = "levels/level" + convert.str() + ".txt";
+    std::cout << mapPath << std::endl;
     tilesheetPath = tilePath;
     loadMap(imageManager);
 }
+
+// Default constructor, to store the levels in an array
+Level::Level(){}
 
 // Load Map function
 void Level::loadMap(ImageManager& imageManager)
 {
     std::string line;
     std::string subString;
-    std::ifstream file(mapPath + "map.txt");
+    std::ifstream file(mapPath);
     int lineCounter = 0;// Variable to track what line is currently being read
     exitOpen = false;
     playerCrushed = false;
+    cleared = false;
+    remainingDiamonds = 0;
 
     // Loading the tilesheet associated with the level instance
     imageManager.loadImage(tilesheetPath);
@@ -56,13 +64,19 @@ void Level::loadMap(ImageManager& imageManager)
                 convert >> result;
 
                 // Populating the array
-                if(subString != "s")
-                    tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
-                else
+                if(subString == "s")
                 {
                     tileMap[subCounter][lineCounter - 2] = Tile(1,subCounter,lineCounter - 2,tileSize);
                     playerSpawn = sf::Vector2i(subCounter,lineCounter - 2);
                 }
+                else if (subString == "3")
+                {
+                    tileMap[subCounter][lineCounter - 2] = Tile(2,subCounter,lineCounter - 2,tileSize);
+                    exitLocation = sf::Vector2i(subCounter,lineCounter - 2);
+                    std::cout << "Exit Location: " << subCounter << "," << lineCounter - 2 << std::endl;
+                }
+                else
+                    tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
 
                 // Initilizing the tile's sprite
                 tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilesheetPath), tileSize);
@@ -162,6 +176,7 @@ void Level::draw(sf::RenderWindow& window)
     {
         for(int j = 0; j < mapSize.y; j++)
         {
+            std::cout << "drawing: " << i << "," << j << "\n";
             tileMap[i][j].draw(window);
         }
     }
@@ -212,6 +227,26 @@ std::vector<sf::Vector2i> Level::getObstacleLocations()
         returns.push_back(sf::Vector2i(itr->x, itr->y));
 
     return returns;
+}
+
+void Level::checkExit(sf::Vector2i playerLocation)
+{
+    if(remainingDiamonds == 0 && !exitOpen)
+    {
+        std::cout << "Opening " << exitLocation.x << "," << exitLocation.y << std::endl;
+        tileMap[exitLocation.x][exitLocation.y].setType(Tile::EXIT, tileSize);
+        exitOpen = true;
+    }
+
+    if(playerLocation == exitLocation)
+    {
+        cleared = true;
+    }
+}
+
+bool Level::isCleared()
+{
+    return cleared;
 }
 
 const int Level::getTileSize()

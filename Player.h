@@ -9,7 +9,7 @@
 class Player : public Entity
 {
     public:
-        Player(int gridX, int gridY, const int tileSize, sf::Texture& texture);
+        Player(int gridX, int gridY, int tileSize, sf::Texture& texture);
         virtual ~Player();
         void update(Level& currentLevel, InputManager& inputManager);
         void decrementLives();

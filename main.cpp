@@ -22,10 +22,17 @@ int main()
 
     // initializing the level & level counter
     int levelCount = 0;
-    Level level("levels/", "assets/tilesheets/upperTiles.png", imageManager);
-    Player player(level.getPlayerSpawn().x,level.getPlayerSpawn().y,level.getTileSize(), imageManager.getTexture("playerSprite"));
+    Level levels[4];
+
+    for(int i = 0; i < 4; i++)
+        levels[i] = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
+
+    // initializing the player
+    Player player(levels[levelCount].getPlayerSpawn().x,levels[levelCount].getPlayerSpawn().y,levels[levelCount].getTileSize(), imageManager.getTexture("playerSprite"));
     player.initAnimations(5,500);
-    Camera2D camera(1280,720,level.getMapSize().x,level.getMapSize().y, level.getTileSize());
+
+    // initializing the camera
+    Camera2D camera(1280,720,levels[levelCount].getMapSize().x,levels[levelCount].getMapSize().y, levels[levelCount].getTileSize());
 
     while(window.isOpen())
     {
@@ -66,29 +73,42 @@ int main()
         case UserInterface::PLAY:
             if(inputManager.validKeyDown())
             {
-                player.update(level, inputManager);
-                level.update(player.getGridLocation());
-                if(level.isPlayerCrushed())
+                player.update(levels[levelCount], inputManager);
+                levels[levelCount].update(player.getGridLocation());
+                if(levels[levelCount].isPlayerCrushed())
                 {
-                    level.loadMap(imageManager);
+                    levels[levelCount].loadMap(imageManager);
                     player.decrementLives();
-                    player.setGridLocation(level.getPlayerSpawn());
-                    player.updateSprite(level.getTileSize());
-                    ui.updateLives(level.getPlayerSpawn(), level.getTileSize());
+                    player.setGridLocation(levels[levelCount].getPlayerSpawn());
+                    player.updateSprite(levels[levelCount].getTileSize());
+                    ui.updateLives(levels[levelCount].getPlayerSpawn(), levels[levelCount].getTileSize());
                 }
 
-                if(level.getDiamondCollected())
-                    ui.updateDiamonds(player.getGridLocation(), level.getTileSize());
+                if(levels[levelCount].getDiamondCollected())
+                    ui.updateDiamonds(player.getGridLocation(), levels[levelCount].getTileSize());
             }
-            camera.update(player.getGridLocation(), level.getTileSize());
+            camera.update(player.getGridLocation(), levels[levelCount].getTileSize());
             player.updateAnimations();
             window.setView(camera.getView());
-            ui.updatePlay(player.getGridLocation(), level.getTileSize(), player.getRemainingLives(), level.getRemainingDiamonds());
+            ui.updatePlay(player.getGridLocation(), levels[levelCount].getTileSize(), player.getRemainingLives(), levels[levelCount].getRemainingDiamonds());
+
+            // Checking if the level has opened
+            levels[levelCount].checkExit(player.getGridLocation());
+
+            // Checking if the level has been cleared
+            if(levels[levelCount].isCleared() && levelCount < 4)
+            {
+                levelCount++;
+                //level = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
+                camera = Camera2D(1280,720,levels[levelCount].getMapSize().x,levels[levelCount].getMapSize().y, levels[levelCount].getTileSize());
+                player.setGridLocation(levels[levelCount].getPlayerSpawn());
+                printf("Level Changed\n");
+            }
 
             // Checking if the game has ended
-            if(level.getRemainingDiamonds() == 0)
+            if(levels[levelCount].isCleared() && levelCount == 4)
                 ui.initInterface(UserInterface::WIN, imageManager);
-            else if (player.getRemainingLives() == 0)
+            if (player.getRemainingLives() == 0)
                 ui.initInterface(UserInterface::GAMEOVER, imageManager);
             break;
         }
@@ -96,7 +116,8 @@ int main()
         // Render
         window.clear();
         // Drawing things relative to the camera
-        level.draw(window);
+        levels[levelCount].draw(window);
+        printf("Drawn\n");
         player.draw(window);
         ui.drawRelative(window);
 
@@ -105,4 +126,5 @@ int main()
         ui.drawAbsolute(window);
         window.display();
     }
+    return 0;
 }

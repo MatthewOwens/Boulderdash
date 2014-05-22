@@ -1,7 +1,7 @@
 #include "Tile.h"
 #include <iostream>
 
-Tile::Tile(int identifier, int x, int y, const int tileSize)
+Tile::Tile(int identifier, int x, int y, int tileSize)
 {
     //gridLocation = sf::Vector2i(gridX, gridY);
 
@@ -37,41 +37,20 @@ Tile::Tile(int identifier, int x, int y, const int tileSize)
 // Default constructor
 Tile::Tile(){}
 
-void Tile::setTexture(sf::Texture& texture, const int tileSize)
+void Tile::setTexture(sf::Texture& texture, int tileSize)
 {
     // Associating a texture (tileSheet) with this sprite
     sprite.setTexture(texture);
 
     // Determining what part of the tileSheet to draw
-    if (type != Type::EXIT)
-        sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize) );
-    else
-        sprite.setTextureRect( sf::IntRect(2 * tileSize, 0, tileSize, tileSize) );
+    sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize) );
 }
 
-void Tile::setType(Type newType, const int tileSize)
+void Tile::setType(Type newType, int tileSize)
 {
-    /*switch(newType)
-    {
-    case 0:
-        type = Type::DIRT;
-        break;
-    case 1:
-        type = Type::CLEAR;
-        break;
-    case 2:
-        type = Type::METAL;
-        break;
-    case 3:
-        type = Type::EXIT;
-        break;
-    default:
-        type = Type::DIRT;
-        break;
-    }*/
     type = newType;
 
-    // Changing the sprite to relfect the new type
+    // Changing the sprite to reflect the new type
     sprite.setTextureRect( sf::IntRect(type * tileSize, 0, tileSize, tileSize ));
 }
 

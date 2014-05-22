@@ -12,12 +12,12 @@ class UserInterface
         UserInterface(int resX, int resY, ImageManager& imageManager);
         virtual ~UserInterface();
         void initInterface(Screen newScreen, ImageManager& imageManager);
-        void updatePlay(sf::Vector2i playerPosition, const int tileSize, int remainingLives, int remainingDiamonds);
+        void updatePlay(sf::Vector2i playerPosition, int tileSize, int remainingLives, int remainingDiamonds);
         int updateTitle(sf::RenderWindow& window);
         void drawAbsolute(sf::RenderWindow& window);
         void drawRelative(sf::RenderWindow& window);
-        void updateLives(sf::Vector2i playerSpawn, const int tileSize);
-        void updateDiamonds(sf::Vector2i playerSpawn, const int tileSize);
+        void updateLives(sf::Vector2i playerSpawn, int tileSize);
+        void updateDiamonds(sf::Vector2i playerSpawn, int tileSize);
         Screen getScreenState();
     private:
         std::map<std::string, InterfaceElement> elements;

@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(int gridX, int gridY, const int tileSize, sf::Texture& texture)
+Player::Player(int gridX, int gridY, int tileSize, sf::Texture& texture)
     :Entity(gridX, gridY, tileSize, texture)
 {
     lives = 3;

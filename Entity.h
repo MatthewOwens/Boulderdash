@@ -10,7 +10,7 @@ class Entity
 {
     public:
         Entity(int gridX, int gridY);
-        Entity(int gridX, int gridY, const int tileSize, sf::Texture& texture);
+        Entity(int gridX, int gridY, int tileSize, sf::Texture& texture);
         void initAnimations(int animLength, int frameLength);
         void gridMove(int offsetX, int offsetY);
         sf::Vector2i getGridLocation();
@@ -19,7 +19,7 @@ class Entity
         void setTexture(sf::Texture& texture);
         void setCurrentAnimation(int newAnim);
         void updateAnimations();
-        void updateSprite(const int tileSize);
+        void updateSprite(int tileSize);
         void draw(sf::RenderWindow& window);
         virtual ~Entity() = 0;  // Making the class abstract
 

@@ -59,7 +59,7 @@ void UserInterface::initInterface(Screen newScreen, ImageManager& imageManager)
     }
 }
 
-void UserInterface::updatePlay(sf::Vector2i playerPosition, const int tileSize, int remainingLives, int remainingDiamonds)
+void UserInterface::updatePlay(sf::Vector2i playerPosition, int tileSize, int remainingLives, int remainingDiamonds)
 {
     int livesY = elements["livesText"].headerText.getPosition().y;
     int diamondsY = elements["diamondsText"].headerText.getPosition().y;
@@ -82,7 +82,6 @@ void UserInterface::updatePlay(sf::Vector2i playerPosition, const int tileSize, 
     }
     if (diamondsUpdate)
     {
-        printf("DIAMOND UPDATTU\n");
         convert << remainingDiamonds;
         diamondsY--;
         elements["diamondsText"].headerText.setString(convert.str() + " diamonds remaining.");
@@ -103,7 +102,6 @@ int UserInterface::updateTitle(sf::RenderWindow& window)
     int val = 0;
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        printf("click\n");
         int mouseX = sf::Mouse::getPosition(window).x;
         int mouseY = sf::Mouse::getPosition(window).y;
 
@@ -115,15 +113,14 @@ int UserInterface::updateTitle(sf::RenderWindow& window)
     return val;
 }
 
-void UserInterface::updateLives(sf::Vector2i playerSpawn, const int tileSize)
+void UserInterface::updateLives(sf::Vector2i playerSpawn, int tileSize)
 {
     livesUpdate = true;
     elements["livesText"].headerText.setPosition(playerSpawn.x * tileSize, playerSpawn.y * tileSize);
 }
 
-void UserInterface::updateDiamonds(sf::Vector2i playerSpawn, const int tileSize)
+void UserInterface::updateDiamonds(sf::Vector2i playerSpawn, int tileSize)
 {
-    printf("DIAMOND GETTU\n");
     diamondsUpdate = true;
     elements["diamondsText"].headerText.setPosition(playerSpawn.x * tileSize, playerSpawn.y * tileSize);
 }

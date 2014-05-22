@@ -9,8 +9,8 @@
 class Level
 {
     public:
-    Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
-    Level level();
+    Level(int levelCount, const std::string& tilePath, ImageManager& imageManager);
+    Level();
     ~Level(); // Destructor
     void draw(sf::RenderWindow& window);
     void update(sf::Vector2i playerLocation);
@@ -24,6 +24,8 @@ class Level
     void loadMap(ImageManager& imageManager);
     int getRemainingDiamonds();
     sf::Vector2i getMapSize();
+    void checkExit(sf::Vector2i playerLocation);
+    bool isCleared();
 
 
     private:
@@ -44,9 +46,11 @@ class Level
     std::vector<Obstacle> obstacleLocations;
     sf::Vector2i mapSize;   // The size of the map in tiles
     sf::Vector2i playerSpawn;
-    const int tileSize = 64;
+    sf::Vector2i exitLocation;
+    int tileSize = 64;
     int remainingDiamonds;
     bool exitOpen;
+    bool cleared;
     bool playerCrushed;
     bool diamondCollected;
 
