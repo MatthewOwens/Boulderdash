@@ -10,6 +10,7 @@ class Level
 {
     public:
     Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager);
+    Level level();
     ~Level(); // Destructor
     void draw(sf::RenderWindow& window);
     void update(sf::Vector2i playerLocation);
@@ -17,13 +18,15 @@ class Level
     bool traversable(int x, int y);         // Gets wether or not the specified tile is traversable
     const int getTileSize();
     bool isPlayerCrushed();
+    bool getDiamondCollected();
     std::vector<sf::Vector2i> getObstacleLocations();
     sf::Vector2i getPlayerSpawn();
     void loadMap(ImageManager& imageManager);
+    int getRemainingDiamonds();
+    sf::Vector2i getMapSize();
 
 
     private:
-
     struct Obstacle
     {
         int x;
@@ -45,6 +48,7 @@ class Level
     int remainingDiamonds;
     bool exitOpen;
     bool playerCrushed;
+    bool diamondCollected;
 
     std::string mapPath;
     std::string tilesheetPath;

@@ -37,3 +37,8 @@ void Player::update(Level& currentLevel, InputManager& inputManager)
     if (currentLevel.isPlayerCrushed())
         lives--;
 }
+
+int Player::getRemainingLives()
+{
+    return lives;
+}

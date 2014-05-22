@@ -5,6 +5,7 @@
 // Constructor, loads the tilemap and tile identifiers from a specific folder
 Level::Level(const std::string& levelPath, const std::string& tilePath, ImageManager& imageManager)
 {
+    remainingDiamonds = 0;
     mapPath = levelPath;
     tilesheetPath = tilePath;
     loadMap(imageManager);
@@ -86,6 +87,7 @@ void Level::loadMap(ImageManager& imageManager)
 void Level::update(sf::Vector2i playerLocation)
 {
     std::vector<Obstacle>::iterator outerItr;
+    diamondCollected = false;
 
     // Updating the rock & diamond positions
     for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
@@ -139,6 +141,7 @@ void Level::update(sf::Vector2i playerLocation)
         if(tileMap[playerLocation.x][playerLocation.y].type == Tile::DIAMOND)
         {
             remainingDiamonds--;
+            diamondCollected = true;
 
             // Remove the diamond from the obstacle list
             for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
@@ -162,6 +165,11 @@ void Level::draw(sf::RenderWindow& window)
             tileMap[i][j].draw(window);
         }
     }
+}
+
+bool Level::getDiamondCollected()
+{
+    return diamondCollected;
 }
 
 bool Level::isPlayerCrushed()
@@ -209,6 +217,16 @@ std::vector<sf::Vector2i> Level::getObstacleLocations()
 const int Level::getTileSize()
 {
     return tileSize;
+}
+
+sf::Vector2i Level::getMapSize()
+{
+    return mapSize;
+}
+
+int Level::getRemainingDiamonds()
+{
+    return remainingDiamonds;
 }
 
 // Level destructor

@@ -3,7 +3,10 @@
 
 ImageManager::ImageManager()
 {
-    //ctor
+    loadImage("assets/backgrounds/endBG.png","endBG");
+    loadImage("assets/backgrounds/titleBG.png","titleBG");
+    loadImage("assets/sprites/button.png","button");
+    loadImage("assets/sprite/raveSprite.png", "playerSprite");
 }
 
 ImageManager::~ImageManager()

@@ -34,7 +34,6 @@ bool InputManager::pressedOnce(std::string keyName)
 
 bool InputManager::validKeyDown()
 {
-    bool value = false;
     std::map<std::string, sf::Keyboard::Key>::iterator mapItr;
 
     for(mapItr = keyBinds.begin(); mapItr != keyBinds.end(); ++mapItr)

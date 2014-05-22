@@ -53,6 +53,16 @@ void Entity::setGridLocation(int gridX, int gridY)
     gridLocation = sf::Vector2i(gridX, gridY);
 }
 
+void Entity::setGridLocation(sf::Vector2i newLocation)
+{
+    gridLocation = newLocation;
+}
+
+void Entity::updateSprite(const int tileSize)
+{
+    sprite.setPosition(gridLocation.x * tileSize, gridLocation.y * tileSize);
+}
+
 // Used to change the animation that is being displayed.
 // Will also reset the current animation frame to zero.
 void Entity::setCurrentAnimation(int newAnim)

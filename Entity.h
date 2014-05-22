@@ -15,9 +15,11 @@ class Entity
         void gridMove(int offsetX, int offsetY);
         sf::Vector2i getGridLocation();
         void setGridLocation(int gridX, int gridY);
+        void setGridLocation(sf::Vector2i newLocation);
         void setTexture(sf::Texture& texture);
         void setCurrentAnimation(int newAnim);
         void updateAnimations();
+        void updateSprite(const int tileSize);
         void draw(sf::RenderWindow& window);
         virtual ~Entity() = 0;  // Making the class abstract
 

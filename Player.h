@@ -13,6 +13,7 @@ class Player : public Entity
         virtual ~Player();
         void update(Level& currentLevel, InputManager& inputManager);
         void decrementLives();
+        int getRemainingLives();
     private:
         int lives;
 
