@@ -3,7 +3,7 @@
 
 Tile::Tile(int identifier, int x, int y, int tileSize)
 {
-    //gridLocation = sf::Vector2i(gridX, gridY);
+    gridLocation = sf::Vector2i(x,y);
 
     // Determining the type of tile specified
     switch(identifier)

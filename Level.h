@@ -42,7 +42,7 @@ class Level
         }
     };
 
-    Tile** tileMap;
+    std::vector<Tile> tileMap;
     std::vector<Obstacle> obstacleLocations;
     sf::Vector2i mapSize;   // The size of the map in tiles
     sf::Vector2i playerSpawn;

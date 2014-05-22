@@ -41,17 +41,12 @@ void Level::loadMap(ImageManager& imageManager)
         if (lineCounter == 0)
         {
             lineStream >> mapSize.x;
-
-            // Creating an array of pointers
-            tileMap = new Tile*[mapSize.x];
         }
         else if (lineCounter == 1)
         {
             lineStream >> mapSize.y;
-
-            // Where an element of type ptr, points to a dynamic array.
-            for (int i = 0; i < mapSize.x; i++)
-                tileMap[i] = new Tile[mapSize.y];
+            std::cout << "Loading a map of size (" << mapSize.x << "," << mapSize.y
+            << ") with " << mapSize.x * mapSize.y << " total tiles" << std::endl;
         }
         else
         {
@@ -66,20 +61,19 @@ void Level::loadMap(ImageManager& imageManager)
                 // Populating the array
                 if(subString == "s")
                 {
-                    tileMap[subCounter][lineCounter - 2] = Tile(1,subCounter,lineCounter - 2,tileSize);
+                    tileMap.push_back(Tile(1,subCounter,lineCounter - 2,tileSize));
                     playerSpawn = sf::Vector2i(subCounter,lineCounter - 2);
                 }
                 else if (subString == "3")
                 {
-                    tileMap[subCounter][lineCounter - 2] = Tile(2,subCounter,lineCounter - 2,tileSize);
+                    tileMap.push_back(Tile(2,subCounter,lineCounter - 2,tileSize));
                     exitLocation = sf::Vector2i(subCounter,lineCounter - 2);
-                    std::cout << "Exit Location: " << subCounter << "," << lineCounter - 2 << std::endl;
                 }
                 else
-                    tileMap[subCounter][lineCounter - 2] = Tile(result, subCounter,lineCounter - 2,tileSize);
+                    tileMap.push_back(Tile(result, subCounter,lineCounter - 2,tileSize));
 
                 // Initilizing the tile's sprite
-                tileMap[subCounter][lineCounter - 2].setTexture(imageManager.getTexture(tilesheetPath), tileSize);
+                tileMap[mapSize.x * (lineCounter - 2) + subCounter].setTexture(imageManager.getTexture(tilesheetPath), tileSize);
 
                 // Incrementing the counters
                 if (result == 5)
@@ -91,6 +85,8 @@ void Level::loadMap(ImageManager& imageManager)
                     obstacleLocations.insert(obstacleLocations.begin(),Obstacle(subCounter, lineCounter - 2));
 
                 subCounter++;
+                /*std::cout << "Loaded tile at (" << subCounter << "," << lineCounter-2
+                << "), tile number " << mapSize.x * (lineCounter - 2) + subCounter << std::endl;*/
             }
         }
         lineCounter++;
@@ -103,16 +99,28 @@ void Level::update(sf::Vector2i playerLocation)
     std::vector<Obstacle>::iterator outerItr;
     diamondCollected = false;
 
+    // Converting the playerLocation to a vectorLoc
+    int playerLoc = (mapSize.x * playerLocation.y) + playerLocation.x;
+
     // Updating the rock & diamond positions
     for(outerItr = obstacleLocations.begin(); outerItr != obstacleLocations.end(); ++outerItr)
     {
         bool moved = false;
 
-        if(tileMap[outerItr->x][outerItr->y + 1].type == Tile::CLEAR)
+        // getting the key positions
+        int objectPos = (mapSize.x * outerItr->y) + outerItr->x;
+        int oneDown =   (mapSize.x * outerItr->y + 1) + outerItr->x;
+        int oneRight =  (mapSize.x * outerItr->y) + outerItr->x + 1;
+        int oneLeft =   (mapSize.x * outerItr->y) + outerItr->x - 1;
+        int oneDownR =  (mapSize.x * outerItr->y + 1) + outerItr->x + 1;
+        int oneDownL =  (mapSize.x * outerItr->y + 1) + outerItr->x - 1;
+
+        //if(tileMap[outerItr->x][outerItr->y + 1].type == Tile::CLEAR)
+        if(tileMap[oneDown].type == Tile::CLEAR)
         {
             outerItr->falling = true;
-            tileMap[outerItr->x][outerItr->y + 1].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
-            tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+            tileMap[oneDown].setType(tileMap[objectPos].type, tileSize);
+            tileMap[objectPos].setType(Tile::CLEAR, tileSize);
             outerItr->y++;
             moved = true;
 
@@ -126,33 +134,33 @@ void Level::update(sf::Vector2i playerLocation)
             std::cout << "SPLAT!" << std::endl;
         }
 
-        if((tileMap[outerItr->x][outerItr->y + 1].type == Tile::ROCK ||
-           tileMap[outerItr->x][outerItr->y + 1].type == Tile::DIAMOND)
+        if((tileMap[oneDown].type == Tile::ROCK ||
+           tileMap[oneDown].type == Tile::DIAMOND)
            && moved == false)
         {
-            if (tileMap[outerItr->x + 1][outerItr->y].type == Tile::CLEAR &&
-                tileMap[outerItr->x + 1][outerItr->y + 1].type == Tile::CLEAR)
+            if (tileMap[oneRight].type == Tile::CLEAR &&
+                tileMap[oneDownR].type == Tile::CLEAR)
             {
-                tileMap[outerItr->x + 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
-                tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                tileMap[oneRight].setType(tileMap[objectPos].type, tileSize);
+                tileMap[objectPos].setType(Tile::CLEAR, tileSize);
                 outerItr->x++;
                 moved = true;
             }
-            else if (tileMap[outerItr->x - 1][outerItr->y].type == Tile::CLEAR &&
-                     tileMap[outerItr->x - 1][outerItr->y + 1].type == Tile::CLEAR)
+            else if (tileMap[oneLeft].type == Tile::CLEAR &&
+                     tileMap[oneDownL].type == Tile::CLEAR)
             {
-                tileMap[outerItr->x - 1][outerItr->y].setType(tileMap[outerItr->x][outerItr->y].type, tileSize);
-                tileMap[outerItr->x][outerItr->y].setType(Tile::CLEAR, tileSize);
+                tileMap[oneLeft].setType(tileMap[objectPos].type, tileSize);
+                tileMap[objectPos].setType(Tile::CLEAR, tileSize);
                 outerItr->x--;
                 moved = true;
             }
         }
     }
     // Updating the tiles as the player moves along them
-    if(tileMap[playerLocation.x][playerLocation.y].type != Tile::ROCK)
+    if(tileMap[playerLoc].type != Tile::ROCK)
     {
         // If the player collected a diamond
-        if(tileMap[playerLocation.x][playerLocation.y].type == Tile::DIAMOND)
+        if(tileMap[playerLoc].type == Tile::DIAMOND)
         {
             remainingDiamonds--;
             diamondCollected = true;
@@ -165,20 +173,16 @@ void Level::update(sf::Vector2i playerLocation)
             }
             obstacleLocations.erase(outerItr);
         }
-        tileMap[playerLocation.x][playerLocation.y].setType(Tile::CLEAR, tileSize);
+        tileMap[playerLoc].setType(Tile::CLEAR, tileSize);
     }
 }
 
 // Draw function
 void Level::draw(sf::RenderWindow& window)
 {
-    for(int i = 0; i < mapSize.x; i++)
+    for(int i = 0; i < mapSize.x * mapSize.y; i++)
     {
-        for(int j = 0; j < mapSize.y; j++)
-        {
-            std::cout << "drawing: " << i << "," << j << "\n";
-            tileMap[i][j].draw(window);
-        }
+        tileMap[i].draw(window);
     }
 }
 
@@ -204,15 +208,17 @@ Tile::Type Level::getTileID(int x, int y)
         std::cout << "Requested tile (" << x << "," << y << "is out of the level bounds\n";
         return Tile::DIRT;
     }
-    return tileMap[x][y].type;
+    return tileMap[y * mapSize.x + x].type;
 }
 
 bool Level::traversable(int x, int y)
 {
-    if (tileMap[x][y].type == Tile::CLEAR ||
-        tileMap[x][y].type == Tile::DIRT ||
-        tileMap[x][y].type == Tile::DIAMOND||
-        (tileMap[x][y].type == Tile::EXIT && exitOpen))
+    int loc = y * mapSize.x + x;
+
+    if (tileMap[loc].type == Tile::CLEAR ||
+        tileMap[loc].type == Tile::DIRT ||
+        tileMap[loc].type == Tile::DIAMOND||
+       (tileMap[loc].type == Tile::EXIT && exitOpen))
    {
         return true;
    } else return false;
@@ -234,7 +240,7 @@ void Level::checkExit(sf::Vector2i playerLocation)
     if(remainingDiamonds == 0 && !exitOpen)
     {
         std::cout << "Opening " << exitLocation.x << "," << exitLocation.y << std::endl;
-        tileMap[exitLocation.x][exitLocation.y].setType(Tile::EXIT, tileSize);
+        tileMap[mapSize.x * exitLocation.y + exitLocation.x].setType(Tile::EXIT, tileSize);
         exitOpen = true;
     }
 
@@ -267,9 +273,8 @@ int Level::getRemainingDiamonds()
 // Level destructor
 Level::~Level()
 {
-    // Cleaning up the dynamically sized arrays
-    for(int i = 0; i < mapSize.y; ++i)
-        delete [] tileMap[i];
-
-    delete [] tileMap;
+    // No more dynamically sized arrays
+    // No more cleanup
+    // No more crashes at 23:00
+    // Hooray.
 }

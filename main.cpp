@@ -102,7 +102,6 @@ int main()
                 //level = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
                 camera = Camera2D(1280,720,levels[levelCount].getMapSize().x,levels[levelCount].getMapSize().y, levels[levelCount].getTileSize());
                 player.setGridLocation(levels[levelCount].getPlayerSpawn());
-                printf("Level Changed\n");
             }
 
             // Checking if the game has ended
@@ -116,9 +115,11 @@ int main()
         // Render
         window.clear();
         // Drawing things relative to the camera
-        levels[levelCount].draw(window);
-        printf("Drawn\n");
-        player.draw(window);
+        if(ui.getScreenState() == UserInterface::PLAY)
+        {
+            levels[levelCount].draw(window);
+            player.draw(window);
+        }
         ui.drawRelative(window);
 
         // Drawing things relative to the screen
