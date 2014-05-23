@@ -19,7 +19,7 @@ class Tile
     private:
         sf::Sprite sprite;
         Type type;
-        //sf::Vector2i gridLocation;
+        sf::Vector2i gridLocation;
 };
 
 #endif // TILE_H

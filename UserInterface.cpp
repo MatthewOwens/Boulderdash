@@ -84,7 +84,9 @@ void UserInterface::updatePlay(sf::Vector2i playerPosition, int tileSize, int re
     {
         convert << remainingDiamonds;
         diamondsY--;
-        elements["diamondsText"].headerText.setString(convert.str() + " diamonds remaining.");
+        if(remainingDiamonds != 0)
+             elements["diamondsText"].headerText.setString(convert.str() + " diamonds remaining.");
+        else elements["diamondsText"].headerText.setString("Exit Clear!");
         elements["diamondsText"].headerText.setPosition(playerPosition.x * tileSize + 128, diamondsY);
         elements["diamondsText"].headerText.setColor(sf::Color::Cyan);
 

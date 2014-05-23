@@ -20,6 +20,12 @@ Level::Level(){}
 // Load Map function
 void Level::loadMap(ImageManager& imageManager)
 {
+    // Ensuring that the map vector is cleared
+    tileMap.clear();
+
+    // Ensuring that the obstacle vector is cleared
+    obstacleLocations.clear();
+
     std::string line;
     std::string subString;
     std::ifstream file(mapPath);
@@ -91,6 +97,7 @@ void Level::loadMap(ImageManager& imageManager)
         }
         lineCounter++;
     }
+    std::cout << "There are " << remainingDiamonds << " in this level\n";
 }
 
 // Update Method
@@ -109,11 +116,11 @@ void Level::update(sf::Vector2i playerLocation)
 
         // getting the key positions
         int objectPos = (mapSize.x * outerItr->y) + outerItr->x;
-        int oneDown =   (mapSize.x * outerItr->y + 1) + outerItr->x;
-        int oneRight =  (mapSize.x * outerItr->y) + outerItr->x + 1;
-        int oneLeft =   (mapSize.x * outerItr->y) + outerItr->x - 1;
-        int oneDownR =  (mapSize.x * outerItr->y + 1) + outerItr->x + 1;
-        int oneDownL =  (mapSize.x * outerItr->y + 1) + outerItr->x - 1;
+        int oneDown =   (mapSize.x * (outerItr->y + 1)) + outerItr->x;
+        int oneRight =  (mapSize.x * outerItr->y) + (outerItr->x + 1);
+        int oneLeft =   (mapSize.x * outerItr->y) + (outerItr->x - 1);
+        int oneDownR =  (mapSize.x * (outerItr->y + 1)) + (outerItr->x + 1);
+        int oneDownL =  (mapSize.x * (outerItr->y + 1)) + (outerItr->x - 1);
 
         //if(tileMap[outerItr->x][outerItr->y + 1].type == Tile::CLEAR)
         if(tileMap[oneDown].type == Tile::CLEAR)
@@ -131,7 +138,7 @@ void Level::update(sf::Vector2i playerLocation)
            && outerItr->falling)
         {
             playerCrushed = true;
-            std::cout << "SPLAT!" << std::endl;
+            std::cout << "! splat at: " << playerLocation.x << "," << playerLocation.y << std::endl;
         }
 
         if((tileMap[oneDown].type == Tile::ROCK ||
@@ -215,9 +222,9 @@ bool Level::traversable(int x, int y)
 {
     int loc = y * mapSize.x + x;
 
-    if (tileMap[loc].type == Tile::CLEAR ||
-        tileMap[loc].type == Tile::DIRT ||
-        tileMap[loc].type == Tile::DIAMOND||
+    if (tileMap[loc].type == Tile::CLEAR   ||
+        tileMap[loc].type == Tile::DIRT    ||
+        tileMap[loc].type == Tile::DIAMOND ||
        (tileMap[loc].type == Tile::EXIT && exitOpen))
    {
         return true;

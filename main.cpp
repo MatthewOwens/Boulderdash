@@ -22,10 +22,10 @@ int main()
 
     // initializing the level & level counter
     int levelCount = 0;
-    Level levels[4];
+    Level levels[5];
 
-    for(int i = 0; i < 4; i++)
-        levels[i] = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
+    for(int i = 0; i < 5; i++)
+        levels[i] = Level(i, "assets/tilesheets/upperTiles.png", imageManager);
 
     // initializing the player
     Player player(levels[levelCount].getPlayerSpawn().x,levels[levelCount].getPlayerSpawn().y,levels[levelCount].getTileSize(), imageManager.getTexture("playerSprite"));
@@ -75,11 +75,14 @@ int main()
             {
                 player.update(levels[levelCount], inputManager);
                 levels[levelCount].update(player.getGridLocation());
+
+                // If the player has died
                 if(levels[levelCount].isPlayerCrushed())
                 {
                     levels[levelCount].loadMap(imageManager);
                     player.decrementLives();
                     player.setGridLocation(levels[levelCount].getPlayerSpawn());
+                    std::cout << "! " << player.getGridLocation().x << "," << player.getGridLocation().y << std::endl;
                     player.updateSprite(levels[levelCount].getTileSize());
                     ui.updateLives(levels[levelCount].getPlayerSpawn(), levels[levelCount].getTileSize());
                 }
@@ -99,9 +102,10 @@ int main()
             if(levels[levelCount].isCleared() && levelCount < 4)
             {
                 levelCount++;
-                //level = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
+//                level = Level(levelCount, "assets/tilesheets/upperTiles.png", imageManager);
                 camera = Camera2D(1280,720,levels[levelCount].getMapSize().x,levels[levelCount].getMapSize().y, levels[levelCount].getTileSize());
                 player.setGridLocation(levels[levelCount].getPlayerSpawn());
+                player.updateSprite(levels[levelCount].getTileSize());
             }
 
             // Checking if the game has ended
